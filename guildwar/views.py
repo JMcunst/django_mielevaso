@@ -53,11 +53,11 @@ def getDefenseDec(request):
             print('ATK_LIST:', atk_list)
 
             def_win_count = sum(item['def_win'] for item in atk_list)
-            def_win_rate = def_win_count / len(atk_list) * 100
+            def_win_rate = round(def_win_count / len(atk_list) * 100, 2)
 
             def_strong_total = len(atk_list) * 3
             def_no_death = sum(1 for item in atk_list for value in item['def_death'] if not value)
-            def_strong_point = (def_no_death / def_strong_total) * 100
+            def_strong_point = round((def_no_death / def_strong_total) * 100, 2)
 
             grouped_data.append({'combined_def': key, 'atk_list': atk_list, 'def_win_rate': def_win_rate, 'def_strong_point': def_strong_point})
         return grouped_data
