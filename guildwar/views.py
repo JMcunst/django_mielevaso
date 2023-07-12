@@ -14,18 +14,15 @@ from guildwar.models import GuildwarHistory
 def getDefenseDec(request):
     def sort_and_group_raw_data(raw_data):
         sorted_data = sorted(raw_data, key=lambda x: sorted(x['def']))
-        print('LENGTH:',len(sorted_data))
         grouped_data = []
         for key, group in groupby(sorted_data, key=lambda x: x['def']):
-            print('KEY:', key, 'GROUP:', group)
             atk_list = [{'atk': item['atk'], 'def_win': item['def_win'],'def_death': item['def_death']} for item in group]
-            print('ATK_LIST:', atk_list)
 
             def_win_count = sum(item['def_win'] for item in atk_list)
             def_win_rate = round(def_win_count / len(atk_list) * 100, 2)
 
             def_strong_total = len(atk_list) * 3
-            def_no_death = sum(1 for item in atk_list for value in item['def_death'] if not value)
+            def_no_death = sum(1 for item in atk_list for value in item['def_death'] if value)
             def_strong_point = round((def_no_death / def_strong_total) * 100, 2)
 
             grouped_data.append({'combined_def': key, 'atk_list': atk_list, 'def_win_rate': def_win_rate, 'def_strong_point': def_strong_point})
@@ -34,7 +31,6 @@ def getDefenseDec(request):
     res_data = dict()
 
     param = request.GET
-    print(param)
 
     ## 연결된 Postgresql의 guildwar_history 테이블에서 데이터를 가져 옴.
     guildwar_histories = GuildwarHistory.objects.all()
@@ -61,7 +57,6 @@ def getDefenseDec(request):
         raw_data.append(his_data)
 
     sorted_data = sort_and_group_raw_data(raw_data)
-
     res_data['data'] = sorted_data
 
     return Response(data=res_data, status=status.HTTP_200_OK)
